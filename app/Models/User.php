@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // <-- Ditambahkan agar role bisa diisi
     ];
 
     /**
@@ -45,5 +46,25 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // --- RELASI DATABASE ---
+
+    /**
+     * Relasi 1-to-Many: User (Mahasiswa) bisa memiliki banyak Service (Jasa).
+     */
+    public function services()
+    {
+        return $this->hasMany(Service::class);
+    }
+
+    /**
+     * Relasi Many-to-Many: User memberikan ulasan ke banyak Service via tabel pivot 'reviews'.
+     */
+    public function reviewedServices()
+    {
+        return $this->belongsToMany(Service::class, 'reviews')
+                    ->withPivot('rating', 'comment')
+                    ->withTimestamps();
     }
 }
